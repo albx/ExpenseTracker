@@ -1,0 +1,56 @@
+﻿<div class="mb-3">
+    <EditForm Model="newItem" OnValidSubmit="AddNewItem" class="row row-cols-lg-auto g-3 align-items-center">
+        <DataAnnotationsValidator />
+
+        <div class="col-12">
+            <InputText @bind-Value="newItem.Name" class="form-control" />
+            <ValidationMessage For="@(() => newItem.Name)" />
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </EditForm>
+    <hr />
+    @if (Items is null || Items.Count == 0)
+    {
+        <h2>No items</h2>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var item in Items)
+            {
+            <div class="list-group-item">
+                <InputCheckbox @bind-Value="item.IsAcquired" class="form-check-input me-1" />
+                @item.Name
+                <button type="button" class="btn btn-outline-danger" @onclick="(() => RemoveItem(item))">Remove</button>
+            </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<ExpenseItemViewModel> Items { get; set; }
+
+    private ExpenseItemViewModel newItem = new();
+
+    void AddNewItem()
+    {
+        if (!Items.Any(i => i.Name == newItem.Name))
+        {
+            Items.Add(newItem);
+        }
+
+        newItem = new();
+    }
+
+    void RemoveItem(ExpenseItemViewModel item)
+    {
+        if (Items.Contains(item))
+        {
+            Items.Remove(item);
+        }
+    }
+}

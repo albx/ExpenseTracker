@@ -1,0 +1,65 @@
+﻿@page "/expenses/new"
+
+@inject ExpensesService Service
+
+<PageTitle>New Expense</PageTitle>
+
+<h3>New Expense</h3>
+
+<EditForm Model="model" OnValidSubmit="AddNewExpense">
+    <DataAnnotationsValidator />
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group mb-3">
+                <label for="expenseTitle">Title</label>
+                <InputText @bind-Value="model.Title" class="form-control" id="expenseTitle" />
+                <ValidationMessage For="@(() => model.Title)" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="expenseDate">Expense date</label>
+                <InputDate @bind-Value="model.ExpenseDate" class="form-control" id="expenseDate" />
+                <ValidationMessage For="@(() => model.ExpenseDate)" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="expenseTotalAmount">Total amount</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">&euro;</span>
+                    <InputNumber @bind-Value="model.TotalAmount" class="form-control" id="expenseTotalAmount" />
+                </div>
+                <ValidationMessage For="@(() => model.TotalAmount)" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <ExpenseItemsEditor Items="model.Items" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-outline-primary" @onclick="Cancel">Cancel</button>
+    </div>
+</EditForm>
+
+@code {
+    private NewExpenseViewModel model = new();
+
+    async Task AddNewExpense()
+    {
+        try
+        {
+            await Service.AddNewExpenseAsync(model);
+            model = new();
+        }
+        catch (Exception ex)
+        {
+            //TODO
+        }
+    }
+
+    void Cancel() => model = new();
+
+
+}

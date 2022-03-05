@@ -1,0 +1,46 @@
+﻿@page "/expenses"
+
+@inject ExpensesService Service
+
+<PageTitle>Expenses</PageTitle>
+
+<h3>Expenses</h3>
+
+@if (model.Items.Count() == 0)
+{
+    <h2>No expenses yet.</h2>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in model.Items)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.ExpenseDate.ToShortDateString()</td>
+                    <td>@item.TotalAmount.ToString("C2")</td>
+                    <td>&nbsp;</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private ExpensesListViewModel model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        model = await Service.GetExpensesAsync();
+    }
+}
