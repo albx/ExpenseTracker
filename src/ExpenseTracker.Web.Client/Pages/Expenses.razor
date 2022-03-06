@@ -1,23 +1,24 @@
 ﻿@page "/expenses"
 
 @inject ExpensesService Service
+@inject IStringLocalizer<Resources.Pages.Expenses> Localizer
 
-<PageTitle>Expenses</PageTitle>
+<PageTitle>@Localizer[nameof(Resources.Pages.Expenses.ExpensesPageTitle)]</PageTitle>
 
-<h3>Expenses</h3>
+<h3>@Localizer[nameof(Resources.Pages.Expenses.ExpensesPageTitle)]</h3>
 
 @if (model.Items.Count() == 0)
 {
-    <h2>No expenses yet.</h2>
+    <h4>@Localizer[nameof(Resources.Pages.Expenses.NoExpensesMessage)]</h4>
 }
 else
 {
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Title</th>
-                <th>Date</th>
-                <th>Amount</th>
+                <th>@Localizer[nameof(Resources.Pages.Expenses.TitleLabel)]</th>
+                <th>@Localizer[nameof(Resources.Pages.Expenses.DateLabel)]</th>
+                <th>@Localizer[nameof(Resources.Pages.Expenses.TotalAmountLabel)]</th>
                 <th>&nbsp;</th>
             </tr>
         </thead>

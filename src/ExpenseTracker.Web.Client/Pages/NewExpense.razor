@@ -1,10 +1,12 @@
 ﻿@page "/expenses/new"
 
 @inject ExpensesService Service
+@inject IStringLocalizer<Resources.Pages.NewExpense> Localizer
+@inject IStringLocalizer<Resources.Shared> SharedLocalizer
 
-<PageTitle>New Expense</PageTitle>
+<PageTitle>@Localizer[nameof(Resources.Pages.NewExpense)]</PageTitle>
 
-<h3>New Expense</h3>
+<h3>@Localizer[nameof(Resources.Pages.NewExpense)]</h3>
 
 <EditForm Model="model" OnValidSubmit="AddNewExpense">
     <DataAnnotationsValidator />
@@ -12,19 +14,19 @@
     <div class="row">
         <div class="col-md-8">
             <div class="form-group mb-3">
-                <label for="expenseTitle">Title</label>
+                <label for="expenseTitle">@Localizer[nameof(Resources.Pages.NewExpense.TitleLabel)]</label>
                 <InputText @bind-Value="model.Title" class="form-control" id="expenseTitle" />
                 <ValidationMessage For="@(() => model.Title)" />
             </div>
 
             <div class="form-group mb-3">
-                <label for="expenseDate">Expense date</label>
+                <label for="expenseDate">@Localizer[nameof(Resources.Pages.NewExpense.ExpenseDateLabel)]</label>
                 <InputDate @bind-Value="model.ExpenseDate" class="form-control" id="expenseDate" />
                 <ValidationMessage For="@(() => model.ExpenseDate)" />
             </div>
 
             <div class="form-group mb-3">
-                <label for="expenseTotalAmount">Total amount</label>
+                <label for="expenseTotalAmount">@Localizer[nameof(Resources.Pages.NewExpense.TotalAmount)]</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text">&euro;</span>
                     <InputNumber @bind-Value="model.TotalAmount" class="form-control" id="expenseTotalAmount" />
@@ -38,8 +40,8 @@
     </div>
 
     <div class="form-group">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <button type="button" class="btn btn-outline-primary" @onclick="Cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">@SharedLocalizer[nameof(Resources.Shared.SaveLabel)]</button>
+        <button type="button" class="btn btn-outline-primary" @onclick="Cancel">@SharedLocalizer[nameof(Resources.Shared.CancelLabel)]</button>
     </div>
 </EditForm>
 
