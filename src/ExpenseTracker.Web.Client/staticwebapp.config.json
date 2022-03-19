@@ -1,4 +1,22 @@
 {
+  "routes": [
+    {
+      "route": "/api/*",
+      "allowedRoles": [ "authenticated" ]
+    },
+    {
+      "route": "/logout",
+      "redirect": "/.auth/logout"
+    },
+    {
+      "route": "/login/twitter",
+      "rewrite": "/.auth/login/twitter"
+    },
+    {
+      "route": "/login/github",
+      "rewrite": "/.auth/login/github"
+    }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html"
   }

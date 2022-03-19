@@ -2,7 +2,7 @@
 
 namespace ExpenseTracker.Web.Shared.Models;
 
-public class ExpenseItemViewModel
+public class ExpenseItemModel
 {
     [Required]
     public string Name { get; set; } = string.Empty;

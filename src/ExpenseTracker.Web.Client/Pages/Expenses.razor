@@ -3,6 +3,8 @@
 @inject ExpensesService Service
 @inject IStringLocalizer<Resources.Pages.Expenses> Localizer
 
+@attribute [Authorize]
+
 <PageTitle>@Localizer[nameof(Resources.Pages.Expenses.ExpensesPageTitle)]</PageTitle>
 
 <h3>@Localizer[nameof(Resources.Pages.Expenses.ExpensesPageTitle)]</h3>

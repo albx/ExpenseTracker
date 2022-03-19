@@ -1,4 +1,4 @@
-using ExpenseTracker.Web.Shared.Models;
+using ExpenseTracker.Web.Api.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -10,10 +10,13 @@ namespace ExpenseTracker.Web.Api
     {
         private readonly ILogger _logger;
 
-        public ExpensesListFunction(ILoggerFactory loggerFactory)
+        public ExpensesListFunction(ILoggerFactory loggerFactory, ExpensesApiService service)
         {
             _logger = loggerFactory.CreateLogger<ExpensesListFunction>();
+            Service = service ?? throw new ArgumentNullException(nameof(service));
         }
+
+        public ExpensesApiService Service { get; }
 
         [Function("ExpensesList")]
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestData req)
@@ -21,22 +24,11 @@ namespace ExpenseTracker.Web.Api
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
             var response = req.CreateResponse(HttpStatusCode.OK);
-            var model = GetExpenses();
+            var model = await Service.GetAllExpensesAsync();
 
             await response.WriteAsJsonAsync(model);
 
             return response;
-        }
-
-        private ExpensesListModel GetExpenses()
-        {
-            return new ExpensesListModel
-            {
-                Items = new[]
-                {
-                    new ExpensesListModel.ExpenseListItemModel { Id = Guid.NewGuid(), Title = "test", ExpenseDate = DateTime.Today, TotalAmount = 10 }
-                }
-            };
         }
     }
 }

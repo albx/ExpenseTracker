@@ -13,5 +13,5 @@ public class NewExpenseModel
     [Required]
     public decimal TotalAmount { get; set; } = 0;
 
-    public List<ExpenseItemViewModel> Items { get; set; } = new();
+    public List<ExpenseItemModel> Items { get; set; } = new();
 }
