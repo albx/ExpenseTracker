@@ -10,11 +10,11 @@
     },
     {
       "route": "/login/twitter",
-      "rewrite": "/.auth/login/twitter"
+      "redirect": "/.auth/login/twitter"
     },
     {
       "route": "/login/github",
-      "rewrite": "/.auth/login/github"
+      "redirect": "/.auth/login/github"
     }
   ],
   "navigationFallback": {

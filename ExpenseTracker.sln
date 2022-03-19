@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseTracker.Web.Client",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseTracker.Web.Shared", "src\ExpenseTracker.Web.Shared\ExpenseTracker.Web.Shared.csproj", "{4DCDA32A-7D77-4973-8E01-7B0EF4D19E04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseTracker.Web.Api", "src\ExpenseTracker.Web.Api\ExpenseTracker.Web.Api.csproj", "{5D606A72-A438-4145-B8F1-E2BF1775E4F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseTracker.Web.Api", "src\ExpenseTracker.Web.Api\ExpenseTracker.Web.Api.csproj", "{5D606A72-A438-4145-B8F1-E2BF1775E4F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
