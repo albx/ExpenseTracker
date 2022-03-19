@@ -1,0 +1,16 @@
+﻿@page "/login"
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>Login</h3>
+        <LoginProviders />
+    </NotAuthorized>
+    <Authorized>
+        <h3>Alreday logged in</h3>
+        <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary btn-lg" href="/">
+                Home page
+            </a>
+        </div>
+    </Authorized>
+</AuthorizeView>

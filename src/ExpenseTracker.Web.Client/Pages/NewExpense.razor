@@ -6,6 +6,8 @@
 @inject IStringLocalizer<Resources.Pages.NewExpense> Localizer
 @inject IStringLocalizer<Resources.Shared> SharedLocalizer
 
+@attribute [Authorize]
+
 <PageTitle>@Localizer[nameof(Resources.Pages.NewExpense)]</PageTitle>
 
 <h3>@Localizer[nameof(Resources.Pages.NewExpense)]</h3>

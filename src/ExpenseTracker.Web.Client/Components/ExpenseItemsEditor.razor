@@ -34,9 +34,9 @@
 
 @code {
     [Parameter]
-    public List<ExpenseItemViewModel> Items { get; set; }
+    public List<ExpenseItemModel> Items { get; set; }
 
-    private ExpenseItemViewModel newItem = new();
+    private ExpenseItemModel newItem = new();
 
     void AddNewItem()
     {
@@ -48,7 +48,7 @@
         newItem = new();
     }
 
-    void RemoveItem(ExpenseItemViewModel item)
+    void RemoveItem(ExpenseItemModel item)
     {
         if (Items.Contains(item))
         {
