@@ -1,10 +1,10 @@
 ﻿namespace ExpenseTracker.Web.Shared.Models;
 
-public class ExpensesListViewModel
+public class ExpensesListModel
 {
-    public IEnumerable<ExpenseListItemViewModel> Items { get; set; } = Array.Empty<ExpenseListItemViewModel>();
+    public IEnumerable<ExpenseListItemModel> Items { get; set; } = Array.Empty<ExpenseListItemModel>();
 
-    public record ExpenseListItemViewModel
+    public record ExpenseListItemModel
     {
         public Guid Id { get; set; }
 

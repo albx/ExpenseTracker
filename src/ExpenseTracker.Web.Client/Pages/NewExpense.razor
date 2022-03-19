@@ -1,6 +1,8 @@
 ﻿@page "/expenses/new"
 
 @inject ExpensesService Service
+@inject NavigationManager Navigation
+
 @inject IStringLocalizer<Resources.Pages.NewExpense> Localizer
 @inject IStringLocalizer<Resources.Shared> SharedLocalizer
 
@@ -10,6 +12,13 @@
 
 <EditForm Model="model" OnValidSubmit="AddNewExpense">
     <DataAnnotationsValidator />
+
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="row">
+            <div class="alert alert-danger">@errorMessage</div>
+        </div>
+    }
 
     <div class="row">
         <div class="col-md-8">
@@ -46,7 +55,9 @@
 </EditForm>
 
 @code {
-    private NewExpenseViewModel model = new();
+    private NewExpenseModel model = new();
+
+    private string? errorMessage;
 
     async Task AddNewExpense()
     {
@@ -54,10 +65,12 @@
         {
             await Service.AddNewExpenseAsync(model);
             model = new();
+
+            Navigation.NavigateTo("expenses");
         }
         catch (Exception ex)
         {
-            //TODO
+            errorMessage = ex.Message;
         }
     }
 

@@ -2,7 +2,7 @@
 
 namespace ExpenseTracker.Web.Shared.Models;
 
-public class NewExpenseViewModel
+public class NewExpenseModel
 {
     [Required]
     public DateTime ExpenseDate { get; set; } = DateTime.Today;
