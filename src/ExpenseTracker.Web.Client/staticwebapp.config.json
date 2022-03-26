@@ -3,18 +3,6 @@
     {
       "route": "/api/*",
       "allowedRoles": [ "authenticated" ]
-    },
-    {
-      "route": "/logout",
-      "redirect": "/.auth/logout"
-    },
-    {
-      "route": "/login/twitter",
-      "redirect": "/.auth/login/twitter"
-    },
-    {
-      "route": "/login/github",
-      "redirect": "/.auth/login/github"
     }
   ],
   "navigationFallback": {
