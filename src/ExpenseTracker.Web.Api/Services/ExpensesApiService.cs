@@ -1,25 +1,36 @@
-﻿using ExpenseTracker.Web.Shared.Models;
+﻿using ExpenseTracker.Data;
+using ExpenseTracker.Data.Models;
+using ExpenseTracker.Web.Shared.Models;
 
 namespace ExpenseTracker.Web.Api.Services
 {
     public class ExpensesApiService
     {
-        public Task CreateNewExpenseAsync(NewExpenseModel model, string userId)
-        {
-            var expense = new Expense(
-                Guid.NewGuid(),
-                model.Title,
-                model.ExpenseDate,
-                model.TotalAmount,
-                model.Items.Select(i => new ExpenseItem(i.Name)));
+        public ExpensesDataContext Context { get; }
 
-            Expenses.Add(expense);
-            return Task.CompletedTask;
+        public ExpensesApiService(ExpensesDataContext context)
+        {
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        public async Task CreateNewExpenseAsync(NewExpenseModel model, string userId)
+        {
+            var expense = new Expense
+            {
+                Id = Guid.NewGuid(),
+                ExpenseDate = model.ExpenseDate,
+                Title = model.Title,
+                TotalAmount = model.TotalAmount,
+                UserId = userId,
+                Items = model.Items.Where(i => i.IsAcquired).Select(i => new Expense.ExpenseItem(i.Name)).ToList()
+            };
+
+            await Context.SaveAsync(expense);
         }
 
         public Task<ExpensesListModel> GetAllExpensesAsync()
         {
-            var expenses = Expenses
+            var expenses = Context.GetAll()
                 .Select(e => new ExpensesListModel.ExpenseListItemModel
                 {
                     Id = e.Id,
@@ -31,11 +42,5 @@ namespace ExpenseTracker.Web.Api.Services
             var model = new ExpensesListModel { Items = expenses };
             return Task.FromResult(model);
         }
-
-        public static List<Expense> Expenses { get; } = new();
     }
-
-    public record Expense(Guid Id, string Title, DateTime ExpenseDate, decimal TotalAmount, IEnumerable<ExpenseItem> Items);
-
-    public record ExpenseItem(string Name);
 }
