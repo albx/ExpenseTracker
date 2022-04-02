@@ -35,9 +35,19 @@ public class ExpensesService
             throw new Exception($"Error deleting expense {model.Title}");
         }
     }
-}
 
-internal static class Expensens
-{
-    internal static List<ExpensesListModel.ExpenseListItemModel> Items { get; } = new();
+    public async Task<ExpenseDetailsModel> GetExpenseDetailsAsync(Guid expenseId)
+    {
+        var model = await Client.GetFromJsonAsync<ExpenseDetailsModel>($"api/ExpenseDetails/{expenseId}");
+        return model ?? new ExpenseDetailsModel();
+    }
+
+    public async Task UpdateExpenseAsync(Guid expenseId, ExpenseDetailsModel model)
+    {
+        var response = await Client.PutAsJsonAsync($"api/UpdateExpense/{expenseId}", model);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Error updating expense {model.Title}");
+        }
+    }
 }

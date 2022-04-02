@@ -3,6 +3,7 @@
 @inject ExpensesService Service
 @inject IStringLocalizer<Resources.Pages.Expenses> Localizer
 @inject IJSRuntime Js
+@inject NavigationManager Navigation
 
 @attribute [Authorize]
 
@@ -34,6 +35,7 @@ else
                     <td>@item.TotalAmount.ToString("C2")</td>
                     <td>
                         <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" @onclick="@(() => OpenExpenseDetail(item))">View</button>
                             <button type="button" class="btn btn-danger" @onclick="@(() => DeleteExpense(item))">Delete</button>
                         </div>
                     </td>
@@ -70,5 +72,10 @@ else
                 await Js.InvokeVoidAsync("alert", $"Si è verificato un errore durante la cancellazione. {ex.Message}");
             }
         }
+    }
+
+    void OpenExpenseDetail(ExpensesListModel.ExpenseListItemModel expense)
+    {
+        Navigation.NavigateTo($"expenses/{expense.Id}");
     }
 }

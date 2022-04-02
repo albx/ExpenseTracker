@@ -1,0 +1,88 @@
+﻿@page "/expenses/{id:guid}"
+
+@inject ExpensesService Service
+@inject IJSRuntime Js 
+
+@inject IStringLocalizer<Resources.Pages.NewExpense> Localizer
+@inject IStringLocalizer<Resources.Shared> SharedLocalizer
+
+@attribute [Authorize]
+
+<PageTitle>Expense detail</PageTitle>
+
+<h3>ExpenseDetails</h3>
+
+<EditForm Model="model" OnValidSubmit="EditExpense">
+    <DataAnnotationsValidator />
+
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="row">
+            <div class="alert alert-danger">@errorMessage</div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group mb-3">
+                <label for="expenseTitle">@Localizer[nameof(Resources.Pages.NewExpense.TitleLabel)]</label>
+                <InputText @bind-Value="model.Title" class="form-control" id="expenseTitle" />
+                <ValidationMessage For="@(() => model.Title)" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="expenseDate">@Localizer[nameof(Resources.Pages.NewExpense.ExpenseDateLabel)]</label>
+                <InputDate @bind-Value="model.ExpenseDate" class="form-control" id="expenseDate" />
+                <ValidationMessage For="@(() => model.ExpenseDate)" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="expenseTotalAmount">@Localizer[nameof(Resources.Pages.NewExpense.TotalAmount)]</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">&euro;</span>
+                    <InputNumber @bind-Value="model.TotalAmount" class="form-control" id="expenseTotalAmount" />
+                </div>
+                <ValidationMessage For="@(() => model.TotalAmount)" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <ExpenseItemsEditor Items="model.Items" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">@SharedLocalizer[nameof(Resources.Shared.SaveLabel)]</button>
+        <button type="button" class="btn btn-outline-primary" @onclick="Cancel">@SharedLocalizer[nameof(Resources.Shared.CancelLabel)]</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public Guid Id { get; set; }
+
+    private ExpenseDetailsModel model = new();
+
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        model = await Service.GetExpenseDetailsAsync(Id);
+    }
+
+    async Task EditExpense()
+    {
+        try
+        {
+            await Service.UpdateExpenseAsync(Id, model);
+            await Js.InvokeVoidAsync("alert", $"La spesa {model.Title} è stata modificata con successo!");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    void Cancel() => model = new();
+}

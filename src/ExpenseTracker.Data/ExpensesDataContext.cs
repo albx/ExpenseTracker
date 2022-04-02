@@ -73,8 +73,8 @@ public class ExpensesDataContext
         {
             Id = id,
             Title = entity[nameof(Expense.Title)]?.ToString() ?? string.Empty,
-            ExpenseDate = (DateTime)entity[nameof(Expense.ExpenseDate)],
-            TotalAmount = (decimal)entity[nameof(Expense.TotalAmount)],
+            ExpenseDate = DateTime.Parse(entity[nameof(Expense.ExpenseDate)]!.ToString()!),
+            TotalAmount = decimal.Parse(entity[nameof(Expense.TotalAmount)]!.ToString()!),
             UserId = entity[nameof(Expense.UserId)]?.ToString() ?? string.Empty,
             Items = JsonSerializer.Deserialize<ICollection<Expense.ExpenseItem>>(entity[nameof(Expense.Items)]?.ToString() ?? string.Empty) ?? new HashSet<Expense.ExpenseItem>()
         };
