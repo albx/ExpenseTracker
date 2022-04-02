@@ -79,4 +79,17 @@ public class ExpensesDataContext
             Items = JsonSerializer.Deserialize<ICollection<Expense.ExpenseItem>>(entity[nameof(Expense.Items)]?.ToString() ?? string.Empty) ?? new HashSet<Expense.ExpenseItem>()
         };
     }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var entity = _client.Query<TableEntity>(e => e.RowKey == id.ToString())?.SingleOrDefault();
+        if (entity is not null)
+        {
+            var response = await _client.DeleteEntityAsync(entity.PartitionKey, entity.RowKey);
+            if (response.IsError)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+        }
+    }
 }

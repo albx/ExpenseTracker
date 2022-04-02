@@ -42,5 +42,10 @@ namespace ExpenseTracker.Web.Api.Services
             var model = new ExpensesListModel { Items = expenses };
             return Task.FromResult(model);
         }
+
+        public async Task DeleteExpenseAsync(Guid expenseId)
+        {
+            await Context.DeleteAsync(expenseId);
+        }
     }
 }

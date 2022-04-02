@@ -26,6 +26,15 @@ public class ExpensesService
         var model = await Client.GetFromJsonAsync<ExpensesListModel>("api/ExpensesList");
         return model ?? new ExpensesListModel();
     }
+
+    public async Task DeleteExpenseAsync(ExpensesListModel.ExpenseListItemModel model)
+    {
+        var response = await Client.DeleteAsync($"/api/DeleteExpense/{model.Id}");
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Error deleting expense {model.Title}");
+        }
+    }
 }
 
 internal static class Expensens

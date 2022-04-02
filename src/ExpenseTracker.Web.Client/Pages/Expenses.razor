@@ -2,6 +2,7 @@
 
 @inject ExpensesService Service
 @inject IStringLocalizer<Resources.Pages.Expenses> Localizer
+@inject IJSRuntime Js
 
 @attribute [Authorize]
 
@@ -31,7 +32,11 @@ else
                     <td>@item.Title</td>
                     <td>@item.ExpenseDate.ToShortDateString()</td>
                     <td>@item.TotalAmount.ToString("C2")</td>
-                    <td>&nbsp;</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-danger" @onclick="@(() => DeleteExpense(item))">Delete</button>
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -44,6 +49,26 @@ else
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        model = await Service.GetExpensesAsync();
+        await LoadExpensesAsync();
+    }
+
+    private async Task LoadExpensesAsync() => model = await Service.GetExpensesAsync();
+
+    async Task DeleteExpense(ExpensesListModel.ExpenseListItemModel expense)
+    {
+        if (await Js.InvokeAsync<bool>("confirm", $"Stai per cancellare la spesa {expense.Title}. Sei sicuro?"))
+        {
+            try
+            {
+                await Service.DeleteExpenseAsync(expense);
+                await Js.InvokeVoidAsync("alert", "Elemento cancellato con successo!");
+
+                await LoadExpensesAsync();
+            }
+            catch (Exception ex)
+            {
+                await Js.InvokeVoidAsync("alert", $"Si è verificato un errore durante la cancellazione. {ex.Message}");
+            }
+        }
     }
 }
