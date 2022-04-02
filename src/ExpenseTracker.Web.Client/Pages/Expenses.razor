@@ -45,8 +45,16 @@ else
     </table>
 }
 
+<Confirm ModalId="@deleteExpenseModalId" 
+         Title="Eliminazione spesa"
+         Content="@($"Stai per cancellare la spesa {selectedItem?.Title}. Sei sicuro?")"
+         OnConfirm="DeleteExpenseConfirmed"/>
+
 @code {
     private ExpensesListModel model = new();
+
+    private ExpensesListModel.ExpenseListItemModel? selectedItem = null;
+    private string deleteExpenseModalId = "deleteExpense";
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,24 +66,32 @@ else
 
     async Task DeleteExpense(ExpensesListModel.ExpenseListItemModel expense)
     {
-        if (await Js.InvokeAsync<bool>("confirm", $"Stai per cancellare la spesa {expense.Title}. Sei sicuro?"))
-        {
-            try
-            {
-                await Service.DeleteExpenseAsync(expense);
-                await Js.InvokeVoidAsync("alert", "Elemento cancellato con successo!");
-
-                await LoadExpensesAsync();
-            }
-            catch (Exception ex)
-            {
-                await Js.InvokeVoidAsync("alert", $"Si è verificato un errore durante la cancellazione. {ex.Message}");
-            }
-        }
+        this.selectedItem = expense;
+        await Js.InvokeVoidAsync("showModal", deleteExpenseModalId);
     }
 
     void OpenExpenseDetail(ExpensesListModel.ExpenseListItemModel expense)
     {
         Navigation.NavigateTo($"expenses/{expense.Id}");
+    }
+
+    private async Task DeleteExpenseConfirmed()
+    {
+        try
+        {
+            await Service.DeleteExpenseAsync(selectedItem!);
+            await Js.InvokeVoidAsync("alert", "Elemento cancellato con successo!");
+
+            await LoadExpensesAsync();
+        }
+        catch (Exception ex)
+        {
+            await Js.InvokeVoidAsync("alert", $"Si è verificato un errore durante la cancellazione. {ex.Message}");
+        }
+        finally
+        {
+            await Js.InvokeVoidAsync("hideModal", deleteExpenseModalId);
+            this.selectedItem = null;
+        }
     }
 }
