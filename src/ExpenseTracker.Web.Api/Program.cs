@@ -9,7 +9,7 @@ var host = new HostBuilder()
     {
         services.AddExpenseDataContext(options =>
         {
-            options.ConnectionString = context.Configuration["AzureWebJobsStorage"];
+            options.ConnectionString = context.Configuration["StorageConnectionString"];
             options.TableName = context.Configuration["ExpensesTableName"];
         });
 
