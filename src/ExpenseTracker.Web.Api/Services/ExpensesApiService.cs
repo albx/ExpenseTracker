@@ -1,25 +1,36 @@
-﻿using ExpenseTracker.Web.Shared.Models;
+﻿using ExpenseTracker.Data;
+using ExpenseTracker.Data.Models;
+using ExpenseTracker.Web.Shared.Models;
 
 namespace ExpenseTracker.Web.Api.Services
 {
     public class ExpensesApiService
     {
-        public Task CreateNewExpenseAsync(NewExpenseModel model, string userId)
-        {
-            var expense = new Expense(
-                Guid.NewGuid(),
-                model.Title,
-                model.ExpenseDate,
-                model.TotalAmount,
-                model.Items.Select(i => new ExpenseItem(i.Name)));
+        public ExpensesDataContext Context { get; }
 
-            Expenses.Add(expense);
-            return Task.CompletedTask;
+        public ExpensesApiService(ExpensesDataContext context)
+        {
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        public async Task CreateNewExpenseAsync(NewExpenseModel model, string userId)
+        {
+            var expense = new Expense
+            {
+                Id = Guid.NewGuid(),
+                ExpenseDate = model.ExpenseDate,
+                Title = model.Title,
+                TotalAmount = model.TotalAmount,
+                UserId = userId,
+                Items = model.Items.Where(i => i.IsAcquired).Select(i => new Expense.ExpenseItem(i.Name)).ToList()
+            };
+
+            await Context.SaveAsync(expense);
         }
 
         public Task<ExpensesListModel> GetAllExpensesAsync()
         {
-            var expenses = Expenses
+            var expenses = Context.GetAll()
                 .Select(e => new ExpensesListModel.ExpenseListItemModel
                 {
                     Id = e.Id,
@@ -32,10 +43,55 @@ namespace ExpenseTracker.Web.Api.Services
             return Task.FromResult(model);
         }
 
-        public static List<Expense> Expenses { get; } = new();
+        public async Task UpdateExpenseAsync(Guid expenseId, ExpenseDetailsModel model)
+        {
+            var expense = Context.GetById(expenseId);
+            if (expense is null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(expenseId));
+            }
+
+            if (model.Title != expense.Title)
+            {
+                expense.Title = model.Title;
+            }
+            if (model.ExpenseDate != expense.ExpenseDate)
+            {
+                expense.ExpenseDate = model.ExpenseDate;
+            }
+            if (model.TotalAmount != expense.TotalAmount)
+            {
+                expense.TotalAmount = model.TotalAmount;
+            }
+
+            expense.Items = model.Items.Where(i => i.IsAcquired).Select(i => new Expense.ExpenseItem(i.Name)).ToList();
+
+            await Context.SaveAsync(expense);
+        }
+
+        public Task<ExpenseDetailsModel?> GetExpenseDetailsAsync(Guid expenseId)
+        {
+            var expense = Context.GetById(expenseId);
+            if (expense is null)
+            {
+                return Task.FromResult<ExpenseDetailsModel?>(null);
+            }
+
+            var model = new ExpenseDetailsModel
+            {
+                Id = expense.Id,
+                Title = expense.Title,
+                TotalAmount = expense.TotalAmount,
+                ExpenseDate = expense.ExpenseDate,
+                Items = expense.Items.Select(i => new ExpenseItemModel { Name = i.Name, IsAcquired = true }).ToList()
+            };
+
+            return Task.FromResult<ExpenseDetailsModel?>(model);
+        }
+
+        public async Task DeleteExpenseAsync(Guid expenseId)
+        {
+            await Context.DeleteAsync(expenseId);
+        }
     }
-
-    public record Expense(Guid Id, string Title, DateTime ExpenseDate, decimal TotalAmount, IEnumerable<ExpenseItem> Items);
-
-    public record ExpenseItem(string Name);
 }

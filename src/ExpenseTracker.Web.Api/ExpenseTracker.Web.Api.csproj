@@ -13,6 +13,7 @@
     <PackageReference Include="System.Text.Json" Version="6.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ExpenseTracker.Data\ExpenseTracker.Data.csproj" />
     <ProjectReference Include="..\ExpenseTracker.Web.Shared\ExpenseTracker.Web.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,8 @@
 
 @inject ExpensesService Service
 @inject IStringLocalizer<Resources.Pages.Expenses> Localizer
+@inject IJSRuntime Js
+@inject NavigationManager Navigation
 
 @attribute [Authorize]
 
@@ -31,19 +33,65 @@ else
                     <td>@item.Title</td>
                     <td>@item.ExpenseDate.ToShortDateString()</td>
                     <td>@item.TotalAmount.ToString("C2")</td>
-                    <td>&nbsp;</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" @onclick="@(() => OpenExpenseDetail(item))">View</button>
+                            <button type="button" class="btn btn-danger" @onclick="@(() => DeleteExpense(item))">Delete</button>
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 }
 
+<Confirm ModalId="@deleteExpenseModalId" 
+         Title="Eliminazione spesa"
+         Content="@($"Stai per cancellare la spesa {selectedItem?.Title}. Sei sicuro?")"
+         OnConfirm="DeleteExpenseConfirmed"/>
+
 @code {
     private ExpensesListModel model = new();
+
+    private ExpensesListModel.ExpenseListItemModel? selectedItem = null;
+    private string deleteExpenseModalId = "deleteExpense";
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        model = await Service.GetExpensesAsync();
+        await LoadExpensesAsync();
+    }
+
+    private async Task LoadExpensesAsync() => model = await Service.GetExpensesAsync();
+
+    async Task DeleteExpense(ExpensesListModel.ExpenseListItemModel expense)
+    {
+        this.selectedItem = expense;
+        await Js.InvokeVoidAsync("showModal", deleteExpenseModalId);
+    }
+
+    void OpenExpenseDetail(ExpensesListModel.ExpenseListItemModel expense)
+    {
+        Navigation.NavigateTo($"expenses/{expense.Id}");
+    }
+
+    private async Task DeleteExpenseConfirmed()
+    {
+        try
+        {
+            await Service.DeleteExpenseAsync(selectedItem!);
+            await Js.InvokeVoidAsync("alert", "Elemento cancellato con successo!");
+
+            await LoadExpensesAsync();
+        }
+        catch (Exception ex)
+        {
+            await Js.InvokeVoidAsync("alert", $"Si è verificato un errore durante la cancellazione. {ex.Message}");
+        }
+        finally
+        {
+            await Js.InvokeVoidAsync("hideModal", deleteExpenseModalId);
+            this.selectedItem = null;
+        }
     }
 }
