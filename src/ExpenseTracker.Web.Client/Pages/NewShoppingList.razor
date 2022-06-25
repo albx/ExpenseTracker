@@ -1,5 +1,8 @@
 ﻿@page "/shoppinglist/new"
 @inject ShoppingListService Service
+@inject NavigationManager Navigation
+
+@attribute [Authorize]
 
 <h3>NewShoppingList</h3>
 
@@ -14,6 +17,9 @@
         try
         {
             await Service.CreateShoppingListAsync(shoppingList);
+            model = new();
+
+            Navigation.NavigateTo("shoppinglist");
         }
         catch (Exception ex)
         {

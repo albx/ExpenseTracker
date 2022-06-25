@@ -1,0 +1,37 @@
+﻿@page "/shoppinglist"
+@inject ShoppingListService Service
+
+@attribute [Authorize]
+
+<h3>ShoppingList</h3>
+
+@if (!model.Items.Any())
+{
+    <h4>Nessuna lista della spesa</h4>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in model.Items)
+        {
+            <div class="col-md-4 mb-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>@item.Title</h5>
+                        <small>@item.NumberOfItems</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private ShoppingListItemsModel model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        model = await Service.GetShoppingListItemsAsync();
+    }
+}

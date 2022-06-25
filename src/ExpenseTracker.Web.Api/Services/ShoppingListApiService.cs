@@ -10,6 +10,21 @@ public class ShoppingListApiService
         ShoppingListStore.Items.Add(shoppingList);
         return Task.CompletedTask;
     }
+
+    public ShoppingListItemsModel GetShoppingListItems()
+    {
+        //TODO recuperare i dati dalla persitenza
+        var model = new ShoppingListItemsModel
+        {
+            Items = ShoppingListStore.Items.Select(s => new ShoppingListItemsModel.ItemDescriptor
+            {
+                Id = Guid.NewGuid(),
+                NumberOfItems = s.Items.Count,
+                Title = s.Title
+            })
+        };
+        return model;
+    }
 }
 
 internal static class ShoppingListStore

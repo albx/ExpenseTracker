@@ -12,6 +12,12 @@ public class ShoppingListService
         Client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
+    public async Task<ShoppingListItemsModel> GetShoppingListItemsAsync()
+    {
+        var model = await Client.GetFromJsonAsync<ShoppingListItemsModel>("/api/ShoppingList");
+        return model ?? new();
+    }
+
     public async Task CreateShoppingListAsync(ShoppingListModel model)
     {
         var response = await Client.PostAsJsonAsync("/api/CreateShoppingList", model);
