@@ -28,7 +28,7 @@ public class UpdateExpenseFunction
     {
         _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-        var model = await ParseRequestAsync(req);
+        var model = await req.ReadFromJsonAsync<ExpenseModel>();
 
         if (id == Guid.Empty || model is null)
         {

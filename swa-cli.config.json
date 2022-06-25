@@ -1,0 +1,14 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "expense-tracker": {
+      "appLocation": "src\\ExpenseTracker.Web.Client",
+      "apiLocation": "src\\ExpenseTracker.Web.Api",
+      "outputLocation": "bin\\wwwroot",
+      "appBuildCommand": "dotnet publish -c Release -o bin",
+      "apiBuildCommand": "dotnet publish -c Release",
+      "run": "dotnet watch run",
+      "appDevserverUrl": "https://localhost:7263"
+    }
+  }
+}

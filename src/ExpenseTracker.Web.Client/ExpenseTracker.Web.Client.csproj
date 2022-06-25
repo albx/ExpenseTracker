@@ -24,10 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\Components\ExpenseItemsEditor.Designer.cs">
+    <Compile Update="Resources\Components\ExpenseForm.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>ExpenseItemsEditor.resx</DependentUpon>
+      <DependentUpon>ExpenseForm.resx</DependentUpon>
     </Compile>
     <Compile Update="Resources\Pages\Expenses.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -53,12 +53,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Resources\Components\ExpenseItemsEditor.it.resx">
+    <EmbeddedResource Update="Resources\Components\ExpenseForm.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Components\ExpenseItemsEditor.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ExpenseItemsEditor.Designer.cs</LastGenOutput>
+      <LastGenOutput>ExpenseForm.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Pages\Expenses.it.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -61,38 +61,11 @@ namespace ExpenseTracker.Web.Client.Resources.Pages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Expense date.
-        /// </summary>
-        internal static string ExpenseDateLabel {
-            get {
-                return ResourceManager.GetString("ExpenseDateLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to New Expense.
         /// </summary>
         internal static string NewExpensePageTitle {
             get {
                 return ResourceManager.GetString("NewExpensePageTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Title.
-        /// </summary>
-        internal static string TitleLabel {
-            get {
-                return ResourceManager.GetString("TitleLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Total amount.
-        /// </summary>
-        internal static string TotalAmount {
-            get {
-                return ResourceManager.GetString("TotalAmount", resourceCulture);
             }
         }
     }

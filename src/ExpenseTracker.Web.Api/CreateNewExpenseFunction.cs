@@ -5,7 +5,6 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Security.Claims;
-using System.Text.Json;
 
 namespace ExpenseTracker.Web.Api;
 
@@ -26,7 +25,7 @@ public class CreateNewExpenseFunction
     {
         _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-        var model = await ParseRequestAsync(req);
+        var model = await req.ReadFromJsonAsync<ExpenseModel>();
         if (model is null)
         {
             return req.CreateResponse(HttpStatusCode.BadRequest);
@@ -45,17 +44,5 @@ public class CreateNewExpenseFunction
         await response.WriteAsJsonAsync(model, HttpStatusCode.Created);
 
         return response;
-    }
-
-    private async Task<NewExpenseModel?> ParseRequestAsync(HttpRequestData req)
-    {
-        using var reader = new StreamReader(req.Body);
-        var requestBody = await reader.ReadToEndAsync();
-
-        var model = JsonSerializer.Deserialize<NewExpenseModel>(requestBody, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
-        return model;
     }
 }

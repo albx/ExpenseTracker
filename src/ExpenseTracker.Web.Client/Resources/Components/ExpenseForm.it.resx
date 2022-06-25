@@ -118,15 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddLabel" xml:space="preserve">
-    <value>Add</value>
+    <value>Aggiungi</value>
   </data>
   <data name="AddNewItemPlaceholder" xml:space="preserve">
-    <value>Add new item</value>
+    <value>Aggiungi un nuovo elemento</value>
+  </data>
+  <data name="ExpenseDateLabel" xml:space="preserve">
+    <value>Data della spesa</value>
   </data>
   <data name="NoItemsMessage" xml:space="preserve">
-    <value>No items</value>
+    <value>Nessun elemento</value>
   </data>
   <data name="RemoveItemLabel" xml:space="preserve">
-    <value>Remove</value>
+    <value>Cancella</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="TotalAmount" xml:space="preserve">
+    <value>Importo totale</value>
   </data>
 </root>

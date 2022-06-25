@@ -12,7 +12,7 @@ public class ExpensesService
 
     public HttpClient Client { get; }
 
-    public async Task AddNewExpenseAsync(NewExpenseModel model)
+    public async Task AddNewExpenseAsync(ExpenseModel model)
     {
         var response = await Client.PostAsJsonAsync("api/CreateNewExpense", model);
         if (!response.IsSuccessStatusCode)
@@ -36,13 +36,13 @@ public class ExpensesService
         }
     }
 
-    public async Task<ExpenseDetailsModel> GetExpenseDetailsAsync(Guid expenseId)
+    public async Task<ExpenseModel> GetExpenseDetailsAsync(Guid expenseId)
     {
-        var model = await Client.GetFromJsonAsync<ExpenseDetailsModel>($"api/ExpenseDetails/{expenseId}");
-        return model ?? new ExpenseDetailsModel();
+        var model = await Client.GetFromJsonAsync<ExpenseModel>($"api/ExpenseDetails/{expenseId}");
+        return model ?? new ExpenseModel();
     }
 
-    public async Task UpdateExpenseAsync(Guid expenseId, ExpenseDetailsModel model)
+    public async Task UpdateExpenseAsync(Guid expenseId, ExpenseModel model)
     {
         var response = await Client.PutAsJsonAsync($"api/UpdateExpense/{expenseId}", model);
         if (!response.IsSuccessStatusCode)

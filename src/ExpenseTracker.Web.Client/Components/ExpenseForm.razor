@@ -1,0 +1,111 @@
+﻿@inject IStringLocalizer<Resources.Components.ExpenseForm> Localizer
+@inject IStringLocalizer<Resources.Shared> SharedLocalizer
+
+<EditForm Model="Model" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+
+    @*@if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="row">
+            <div class="alert alert-danger">@errorMessage</div>
+        </div>
+    }*@
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group mb-3">
+                <label for="expenseTitle">@Localizer[nameof(Resources.Components.ExpenseForm.TitleLabel)]</label>
+                <InputText @bind-Value="Model.Title" class="form-control" id="expenseTitle" />
+                <ValidationMessage For="@(() => Model.Title)" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="expenseDate">@Localizer[nameof(Resources.Components.ExpenseForm.ExpenseDateLabel)]</label>
+                <InputDate @bind-Value="Model.ExpenseDate" class="form-control" id="expenseDate" />
+                <ValidationMessage For="@(() => Model.ExpenseDate)" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="expenseTotalAmount">@Localizer[nameof(Resources.Components.ExpenseForm.TotalAmount)]</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">&euro;</span>
+                    <InputNumber @bind-Value="Model.TotalAmount" class="form-control" id="expenseTotalAmount" />
+                </div>
+                <ValidationMessage For="@(() => Model.TotalAmount)" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="mb-3">
+                <div class="row row-cols-lg-auto g-3 align-items-center">
+                    <DataAnnotationsValidator />
+
+                    <div class="col-12">
+                        <InputText @bind-Value="newItem.Name" class="form-control" placeholder="@Localizer[nameof(Resources.Components.ExpenseForm.AddNewItemPlaceholder)]" />
+                        <ValidationMessage For="@(() => newItem.Name)" />
+                    </div>
+                    <div class="col-12">
+                        <button type="button" @onclick="AddNewItem" class="btn btn-primary">@Localizer[nameof(Resources.Components.ExpenseForm.AddLabel)]</button>
+                    </div>
+                </div>
+                <hr />
+                @if (Model.Items is null || Model.Items.Count == 0)
+                {
+                    <h2>@Localizer[nameof(Resources.Components.ExpenseForm.NoItemsMessage)]</h2>
+                }
+                else
+                {
+                    <div class="list-group">
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="list-group-item">
+                                @item.Name
+                                <button type="button" class="btn btn-outline-danger" @onclick="(() => RemoveItem(item))">@Localizer[nameof(Resources.Components.ExpenseForm.RemoveItemLabel)]</button>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">@SharedLocalizer[nameof(Resources.Shared.SaveLabel)]</button>
+        <button type="button" class="btn btn-outline-primary" @onclick="Cancel">@SharedLocalizer[nameof(Resources.Shared.CancelLabel)]</button>
+    </div>
+</EditForm>
+
+@code {      
+    [Parameter]
+    [EditorRequired]
+    public ExpenseModel Model { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<ExpenseModel> OnSave { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    private ExpenseItemModel newItem = new();
+
+    void AddNewItem()
+    {
+        if (!Model.Items.Any(i => i.Name == newItem.Name))
+        {
+            Model.Items.Add(newItem);
+        }
+
+        newItem = new();
+    }
+
+    void RemoveItem(ExpenseItemModel item)
+    {
+        if (Model.Items.Contains(item))
+        {
+            Model.Items.Remove(item);
+        }
+    }
+
+    async Task HandleSubmit() => await OnSave.InvokeAsync(Model);
+
+    async Task Cancel() => await OnCancel.InvokeAsync();
+}

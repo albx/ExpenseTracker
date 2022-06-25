@@ -6,6 +6,4 @@ public class ExpenseItemModel
 {
     [Required]
     public string Name { get; set; } = string.Empty;
-
-    public bool IsAcquired { get; set; }
 }

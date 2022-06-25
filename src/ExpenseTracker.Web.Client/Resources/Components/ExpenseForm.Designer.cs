@@ -22,14 +22,14 @@ namespace ExpenseTracker.Web.Client.Resources.Components {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ExpenseItemsEditor {
+    internal class ExpenseForm {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ExpenseItemsEditor() {
+        internal ExpenseForm() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace ExpenseTracker.Web.Client.Resources.Components {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExpenseTracker.Web.Client.Resources.Components.ExpenseItemsEditor", typeof(ExpenseItemsEditor).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExpenseTracker.Web.Client.Resources.Components.ExpenseForm", typeof(ExpenseForm).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -79,6 +79,15 @@ namespace ExpenseTracker.Web.Client.Resources.Components {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expense date.
+        /// </summary>
+        internal static string ExpenseDateLabel {
+            get {
+                return ResourceManager.GetString("ExpenseDateLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No items.
         /// </summary>
         internal static string NoItemsMessage {
@@ -93,6 +102,24 @@ namespace ExpenseTracker.Web.Client.Resources.Components {
         internal static string RemoveItemLabel {
             get {
                 return ResourceManager.GetString("RemoveItemLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title.
+        /// </summary>
+        internal static string TitleLabel {
+            get {
+                return ResourceManager.GetString("TitleLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total amount.
+        /// </summary>
+        internal static string TotalAmount {
+            get {
+                return ResourceManager.GetString("TotalAmount", resourceCulture);
             }
         }
     }
