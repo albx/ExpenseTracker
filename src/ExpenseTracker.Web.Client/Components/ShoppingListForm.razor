@@ -1,0 +1,82 @@
+﻿@inject IStringLocalizer<Resources.Shared> SharedLocalizer
+
+<EditForm Model="Model" OnValidSubmit="HandleSubmit" role="form">
+    <DataAnnotationsValidator />
+
+    <div class="form-group mb-3">
+        <label for="shoppingListTitle">Nome</label>
+        <InputText @bind-Value="Model.Title" class="form-control" id="shoppingListTitle" />
+        <ValidationMessage For="@(() => Model.Title)" />
+    </div>
+    <div class="form-group">
+        <div class="row row-cols-lg-auto g-3 align-items-center">
+            <DataAnnotationsValidator />
+
+            <div class="col-12">
+                <InputText @bind-Value="newItem.Name" class="form-control" placeholder="Aggiungi nuovo elemento" />
+                <ValidationMessage For="@(() => newItem.Name)" />
+            </div>
+            <div class="col-12">
+                <button type="button" @onclick="AddNewItem" class="btn btn-primary">Aggiungi</button>
+            </div>
+        </div>
+        <hr />
+        @if (Model.Items is null || Model.Items.Count == 0)
+        {
+            <h2>Nessun elemento</h2>
+        }
+        else
+        {
+            <div class="list-group">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="list-group-item">
+                        <InputCheckbox @bind-Value="item.IsAcquired" class="form-check-input me-1" />
+                        @item.Name
+                        <button type="button" class="btn btn-outline-danger" @onclick="(() => RemoveItem(item))">Rimuovi</button>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">@SharedLocalizer[nameof(Resources.Shared.SaveLabel)]</button>
+        <button type="button" class="btn btn-outline-primary" @onclick="Cancel">@SharedLocalizer[nameof(Resources.Shared.CancelLabel)]</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public ShoppingListModel Model { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<ShoppingListModel> OnSave { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    private ShoppingListModel.ShoppingListItemModel newItem = new();
+
+    async Task HandleSubmit() => await OnSave.InvokeAsync(Model);
+
+    async Task Cancel() => await OnCancel.InvokeAsync();
+
+    void AddNewItem()
+    {
+        if (!Model.Items.Any(i => i.Name == newItem.Name))
+        {
+            Model.Items.Add(newItem);
+        }
+
+        newItem = new();
+    }
+
+    void RemoveItem(ShoppingListModel.ShoppingListItemModel item)
+    {
+        if (Model.Items.Contains(item))
+        {
+            Model.Items.Remove(item);
+        }
+    }
+}

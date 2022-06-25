@@ -1,7 +1,7 @@
 ﻿@page "/expenses/{id:guid}"
 
 @inject ExpensesService Service
-@inject IJSRuntime Js 
+@inject IJSRuntime Js
 
 @inject IStringLocalizer<Resources.Pages.NewExpense> Localizer
 @inject IStringLocalizer<Resources.Shared> SharedLocalizer
@@ -12,9 +12,16 @@
 
 <h3>ExpenseDetails</h3>
 
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="row">
+        <div class="alert alert-danger">@errorMessage</div>
+    </div>
+}
+
 <ExpenseForm Model="model"
              OnSave="EditExpense"
-             OnCancel="Cancel"/>
+             OnCancel="Cancel" />
 
 @code {
     [Parameter]
@@ -31,12 +38,12 @@
         model = await Service.GetExpenseDetailsAsync(Id);
     }
 
-    async Task EditExpense()
+    async Task EditExpense(ExpenseModel expense)
     {
         try
         {
-            await Service.UpdateExpenseAsync(Id, model);
-            await Js.InvokeVoidAsync("alert", $"La spesa {model.Title} è stata modificata con successo!");
+            await Service.UpdateExpenseAsync(Id, expense);
+            await Js.InvokeVoidAsync("alert", $"La spesa {expense.Title} è stata modificata con successo!");
         }
         catch (Exception ex)
         {

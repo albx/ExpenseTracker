@@ -12,20 +12,27 @@
 
 <h3>@Localizer[nameof(Resources.Pages.NewExpense)]</h3>
 
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="row">
+        <div class="alert alert-danger">@errorMessage</div>
+    </div>
+}
+
 <ExpenseForm Model="model"
              OnSave="AddNewExpense"
-             OnCancel="Cancel"/>
+             OnCancel="Cancel" />
 
 @code {
     private ExpenseModel model = new();
 
     private string? errorMessage;
 
-    async Task AddNewExpense()
+    async Task AddNewExpense(ExpenseModel expense)
     {
         try
         {
-            await Service.AddNewExpenseAsync(model);
+            await Service.AddNewExpenseAsync(expense);
             model = new();
 
             Navigation.NavigateTo("expenses");

@@ -1,0 +1,27 @@
+﻿@page "/shoppinglist/new"
+@inject ShoppingListService Service
+
+<h3>NewShoppingList</h3>
+
+<ShoppingListForm Model="model"
+                  OnSave="AddNewShoppingListAsync" />
+
+@code {
+    private ShoppingListModel model = new();
+
+    async Task AddNewShoppingListAsync(ShoppingListModel shoppingList)
+    {
+        try
+        {
+            await Service.CreateShoppingListAsync(shoppingList);
+        }
+        catch (Exception ex)
+        {
+            //TODO gestisco l'eccezione
+        }
+        finally
+        {
+            //TODO gestisco il finally
+        }
+    }
+}

@@ -1,15 +1,8 @@
 ﻿@inject IStringLocalizer<Resources.Components.ExpenseForm> Localizer
 @inject IStringLocalizer<Resources.Shared> SharedLocalizer
 
-<EditForm Model="Model" OnValidSubmit="HandleSubmit">
+<EditForm Model="Model" OnValidSubmit="HandleSubmit" role="form">
     <DataAnnotationsValidator />
-
-    @*@if (!string.IsNullOrWhiteSpace(errorMessage))
-    {
-        <div class="row">
-            <div class="alert alert-danger">@errorMessage</div>
-        </div>
-    }*@
 
     <div class="row">
         <div class="col-md-8">

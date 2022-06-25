@@ -13,7 +13,9 @@ var host = new HostBuilder()
             options.TableName = context.Configuration["ExpensesTableName"];
         });
 
-        services.AddScoped<ExpensesApiService>();
+        services
+            .AddScoped<ExpensesApiService>()
+            .AddScoped<ShoppingListApiService>();
     })
     .Build();
 
