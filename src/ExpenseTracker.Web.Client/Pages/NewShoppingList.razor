@@ -4,10 +4,17 @@
 
 @attribute [Authorize]
 
-<h3>NewShoppingList</h3>
-
-<ShoppingListForm Model="model"
-                  OnSave="AddNewShoppingListAsync" />
+<PageLayout Title="NewShoppingList">
+    <Toolbar>
+        <a class="btn btn-outline-primary" href="shoppinglist">
+            <span class="oi oi-caret-right"></span>
+        </a>
+    </Toolbar>
+    <Content>
+        <ShoppingListForm Model="model"
+                          OnSave="AddNewShoppingListAsync" />
+    </Content>
+</PageLayout>
 
 @code {
     private ShoppingListModel model = new();

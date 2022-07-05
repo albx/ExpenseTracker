@@ -1,0 +1,21 @@
+﻿<div class="row">
+    <div class="col">
+        <h3>@Title</h3>
+    </div>
+    <div class="col-auto">
+        @Toolbar
+    </div>
+</div>
+@Content
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment Toolbar { get; set; } = default!;
+
+    [Parameter]
+    public RenderFragment Content { get; set; } = default!;
+}

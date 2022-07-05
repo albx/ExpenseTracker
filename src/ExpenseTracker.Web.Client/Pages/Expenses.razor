@@ -9,41 +9,48 @@
 
 <PageTitle>@Localizer[nameof(Resources.Pages.Expenses.ExpensesPageTitle)]</PageTitle>
 
-<h3>@Localizer[nameof(Resources.Pages.Expenses.ExpensesPageTitle)]</h3>
-
-@if (model.Items.Count() == 0)
-{
-    <h4>@Localizer[nameof(Resources.Pages.Expenses.NoExpensesMessage)]</h4>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>@Localizer[nameof(Resources.Pages.Expenses.TitleLabel)]</th>
-                <th>@Localizer[nameof(Resources.Pages.Expenses.DateLabel)]</th>
-                <th>@Localizer[nameof(Resources.Pages.Expenses.TotalAmountLabel)]</th>
-                <th>&nbsp;</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in model.Items)
-            {
-                <tr>
-                    <td>@item.Title</td>
-                    <td>@item.ExpenseDate.ToShortDateString()</td>
-                    <td>@item.TotalAmount.ToString("C2")</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-primary" @onclick="@(() => OpenExpenseDetail(item))">View</button>
-                            <button type="button" class="btn btn-danger" @onclick="@(() => DeleteExpense(item))">Delete</button>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<PageLayout Title="@Localizer[nameof(Resources.Pages.Expenses.ExpensesPageTitle)]">
+    <Toolbar>
+        <a class="btn btn-outline-primary" href="expenses/new">
+            <span class="oi oi-plus"></span>
+        </a>
+    </Toolbar>
+    <Content>
+        @if (model.Items.Count() == 0)
+        {
+            <h4>@Localizer[nameof(Resources.Pages.Expenses.NoExpensesMessage)]</h4>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>@Localizer[nameof(Resources.Pages.Expenses.TitleLabel)]</th>
+                        <th>@Localizer[nameof(Resources.Pages.Expenses.DateLabel)]</th>
+                        <th>@Localizer[nameof(Resources.Pages.Expenses.TotalAmountLabel)]</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in model.Items)
+                    {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td>@item.ExpenseDate.ToShortDateString()</td>
+                            <td>@item.TotalAmount.ToString("C2")</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-primary" @onclick="@(() => OpenExpenseDetail(item))">View</button>
+                                    <button type="button" class="btn btn-danger" @onclick="@(() => DeleteExpense(item))">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </Content>
+</PageLayout>
 
 <Confirm ModalId="@deleteExpenseModalId" 
          Title="Eliminazione spesa"

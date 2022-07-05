@@ -3,28 +3,35 @@
 
 @attribute [Authorize]
 
-<h3>ShoppingList</h3>
-
-@if (!model.Items.Any())
-{
-    <h4>Nessuna lista della spesa</h4>
-}
-else
-{
-    <div class="row">
-        @foreach (var item in model.Items)
+<PageLayout Title="ShoppingList">
+    <Toolbar>
+        <a class="btn btn-outline-primary" href="shoppinglist/new">
+            <span class="oi oi-plus"></span>
+        </a>
+    </Toolbar>
+    <Content>
+        @if (!model.Items.Any())
         {
-            <div class="col-md-4 mb-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>@item.Title</h5>
-                        <small>@item.NumberOfItems</small>
+            <h4>Nessuna lista della spesa</h4>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var item in model.Items)
+                {
+                    <div class="col-md-4 mb-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>@item.Title</h5>
+                                <small>@item.NumberOfItems</small>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         }
-    </div>
-}
+    </Content>
+</PageLayout>
 
 @code {
     private ShoppingListItemsModel model = new();

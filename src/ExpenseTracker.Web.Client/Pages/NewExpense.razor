@@ -10,18 +10,25 @@
 
 <PageTitle>@Localizer[nameof(Resources.Pages.NewExpense)]</PageTitle>
 
-<h3>@Localizer[nameof(Resources.Pages.NewExpense)]</h3>
+<PageLayout Title="@Localizer[nameof(Resources.Pages.NewExpense)]">
+    <Toolbar>
+        <a class="btn btn-outline-primary" href="expenses">
+            <span class="oi oi-caret-right"></span>
+        </a>
+    </Toolbar>
+    <Content>
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="row">
+                <div class="alert alert-danger">@errorMessage</div>
+            </div>
+        }
 
-@if (!string.IsNullOrWhiteSpace(errorMessage))
-{
-    <div class="row">
-        <div class="alert alert-danger">@errorMessage</div>
-    </div>
-}
-
-<ExpenseForm Model="model"
-             OnSave="AddNewExpense"
-             OnCancel="Cancel" />
+        <ExpenseForm Model="model"
+                     OnSave="AddNewExpense"
+                     OnCancel="Cancel" />
+    </Content>
+</PageLayout>
 
 @code {
     private ExpenseModel model = new();
