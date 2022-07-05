@@ -10,18 +10,25 @@
 
 <PageTitle>Expense detail</PageTitle>
 
-<h3>ExpenseDetails</h3>
+<PageLayout Title="ExpenseDetails">
+    <Toolbar>
+        <a class="btn btn-outline-primary" href="expenses">
+            <span class="oi oi-caret-right"></span>
+        </a>
+    </Toolbar>
+    <Content>
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="row">
+                <div class="alert alert-danger">@errorMessage</div>
+            </div>
+        }
 
-@if (!string.IsNullOrWhiteSpace(errorMessage))
-{
-    <div class="row">
-        <div class="alert alert-danger">@errorMessage</div>
-    </div>
-}
-
-<ExpenseForm Model="model"
-             OnSave="EditExpense"
-             OnCancel="Cancel" />
+        <ExpenseForm Model="model"
+                     OnSave="EditExpense"
+                     OnCancel="Cancel" />
+    </Content>
+</PageLayout>
 
 @code {
     [Parameter]

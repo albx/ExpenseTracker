@@ -22,40 +22,37 @@
         }
         else
         {
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>@Localizer[nameof(Resources.Pages.Expenses.TitleLabel)]</th>
-                        <th>@Localizer[nameof(Resources.Pages.Expenses.DateLabel)]</th>
-                        <th>@Localizer[nameof(Resources.Pages.Expenses.TotalAmountLabel)]</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in model.Items)
-                    {
-                        <tr>
-                            <td>@item.Title</td>
-                            <td>@item.ExpenseDate.ToShortDateString()</td>
-                            <td>@item.TotalAmount.ToString("C2")</td>
-                            <td>
+            <div class="row">
+                @foreach (var item in model.Items)
+                {
+                    <div class="col-md-4 mb-2">
+                        <ListItem Title="@item.Title">
+                            <Actions>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-primary" @onclick="@(() => OpenExpenseDetail(item))">View</button>
-                                    <button type="button" class="btn btn-danger" @onclick="@(() => DeleteExpense(item))">Delete</button>
+                                    <button type="button" class="btn btn-m btn-outline-primary" @onclick="@(() => OpenExpenseDetail(item))">View</button>
+                                    <button type="button" class="btn btn-m btn-danger" @onclick="@(() => DeleteExpense(item))">Delete</button>
                                 </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                            </Actions>
+                            <ChildContent>
+                                <dl>
+                                    <dt>@Localizer[nameof(Resources.Pages.Expenses.DateLabel)]</dt>
+                                    <dd>@item.ExpenseDate.ToShortDateString()</dd>
+                                    <dt>@Localizer[nameof(Resources.Pages.Expenses.TotalAmountLabel)]</dt>
+                                    <dd>@item.TotalAmount.ToString("### ###.00 €")</dd>
+                                </dl>
+                            </ChildContent>
+                        </ListItem>
+                    </div>
+                }
+            </div>
         }
     </Content>
 </PageLayout>
 
-<Confirm ModalId="@deleteExpenseModalId" 
+<Confirm ModalId="@deleteExpenseModalId"
          Title="Eliminazione spesa"
          Content="@($"Stai per cancellare la spesa {selectedItem?.Title}. Sei sicuro?")"
-         OnConfirm="DeleteExpenseConfirmed"/>
+         OnConfirm="DeleteExpenseConfirmed" />
 
 @code {
     private ExpensesListModel model = new();

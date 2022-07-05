@@ -20,12 +20,20 @@
                 @foreach (var item in model.Items)
                 {
                     <div class="col-md-4 mb-2">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>@item.Title</h5>
-                                <small>@item.NumberOfItems</small>
-                            </div>
-                        </div>
+                        <ListItem Title="@item.Title">
+                            <Actions>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-m btn-outline-primary">View</button>
+                                    <button type="button" class="btn btn-m btn-danger">Delete</button>
+                                </div>
+                            </Actions>
+                            <ChildContent>
+                                <dl>
+                                    <dt># of items</dt>
+                                    <dd>@item.NumberOfItems</dd>
+                                </dl>
+                            </ChildContent>
+                        </ListItem>
                     </div>
                 }
             </div>
