@@ -7,11 +7,9 @@ var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices((context, services) =>
     {
-        services.AddExpenseDataContext(options =>
-        {
-            options.ConnectionString = context.Configuration["StorageConnectionString"];
-            options.TableName = context.Configuration["ExpensesTableName"];
-        });
+        services.AddExpenseDataContext(
+            expenses => expenses.Configure(context.Configuration["StorageConnectionString"], context.Configuration["ExpensesTableName"]),
+            shoppingList => shoppingList.Configure(context.Configuration["StorageConnectionString"], context.Configuration["ShoppingListTableName"]));
 
         services
             .AddScoped<ExpensesApiService>()

@@ -26,4 +26,27 @@ public class ShoppingListService
             throw new Exception("Error creating shopping list");
         }
     }
+
+    public async Task<ShoppingListModel> GetShoppingListDetailAsync(Guid shoppingListId)
+    {
+        var model = await Client.GetFromJsonAsync<ShoppingListModel>($"/api/ShoppingListDetail/{shoppingListId}");
+        if (model is null)
+        {
+            throw new InvalidOperationException("model is null");
+        }
+
+        return model;
+    }
+
+    public async Task EditShoppingListAsync(Guid shoppingListId, ShoppingListModel model)
+    {
+        var response = await Client.PutAsJsonAsync(
+            $"/api/UpdateShoppingList/{shoppingListId}",
+            model);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception("Error updating shopping list");
+        }
+    }
 }

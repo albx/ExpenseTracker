@@ -6,7 +6,7 @@
 <PageLayout Title="ShoppingList">
     <Toolbar>
         <a class="btn btn-outline-primary" href="shoppinglist/new">
-            <span class="oi oi-plus"></span>
+            <i class="fa-solid fa-plus"></i>
         </a>
     </Toolbar>
     <Content>
@@ -23,7 +23,7 @@
                         <ListItem Title="@item.Title">
                             <Actions>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-m btn-outline-primary">View</button>
+                                    <a href="shoppinglist/@item.Id" class="btn btn-m btn-outline-primary">View</a>
                                     <button type="button" class="btn btn-m btn-danger">Delete</button>
                                 </div>
                             </Actions>

@@ -1,0 +1,45 @@
+﻿@page "/shoppinglist/{id:guid}"
+@inject ShoppingListService Service
+
+<PageLayout Title="Shopping list detail">
+    <Toolbar>
+        <a class="btn btn-outline-primary" href="shoppinglist">
+            <i class="fa-solid fa-caret-right"></i>
+        </a>
+    </Toolbar>
+    <Content>
+        <ErrorBoundary>
+            <ShoppingListForm Model="model"
+                              OnSave="EditShoppingListAsync" />
+        </ErrorBoundary>
+    </Content>
+</PageLayout>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private ShoppingListModel model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        model = await Service.GetShoppingListDetailAsync(Id);
+    }
+
+    async Task EditShoppingListAsync(ShoppingListModel shoppingList)
+    {
+        try
+        {
+            await Service.EditShoppingListAsync(Id, shoppingList);
+        }
+        catch (Exception ex)
+        {
+            //TODO gestisco l'eccezione
+        }
+        finally
+        {
+            //TODO gestisco il finally
+        }
+    }
+}

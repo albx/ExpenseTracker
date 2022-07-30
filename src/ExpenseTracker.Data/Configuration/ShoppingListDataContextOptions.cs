@@ -1,6 +1,6 @@
 ﻿namespace ExpenseTracker.Data.Configuration;
 
-public class ExpenseDataContextOptions
+public class ShoppingListDataContextOptions
 {
     public string ConnectionString { get; set; } = string.Empty;
 
