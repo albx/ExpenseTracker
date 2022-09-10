@@ -17,7 +17,7 @@ public class ShoppingListApiService
     {
         var model = new ShoppingList
         {
-            Id = Guid.NewGuid(),
+            Id = shoppingList.Id,
             Title = shoppingList.Title,
             UserId = userId,
             Items = shoppingList.Items.Select(i => new ShoppingList.ShoppingListItem(i.Name, i.Quantity, i.IsAcquired)).ToList()

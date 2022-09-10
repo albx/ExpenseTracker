@@ -28,14 +28,14 @@ public class ShoppingListDataContext
     {
         try
         {
-            var entity = new TableEntity(shoppingList.Title, shoppingList.Id.ToString())
+            var entity = new TableEntity(shoppingList.UserId, shoppingList.Id.ToString())
             {
                 [nameof(ShoppingList.Title)] = shoppingList.Title,
                 [nameof(ShoppingList.UserId)] = shoppingList.UserId,
                 [nameof(ShoppingList.Items)] = JsonSerializer.Serialize(shoppingList.Items),
             };
 
-            await _client.UpsertEntityAsync(entity);
+            await _client.UpsertEntityAsync(entity, TableUpdateMode.Replace);
         }
         catch (Exception ex)
         {
