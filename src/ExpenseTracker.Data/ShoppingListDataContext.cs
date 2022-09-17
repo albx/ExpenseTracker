@@ -32,6 +32,7 @@ public class ShoppingListDataContext
             {
                 [nameof(ShoppingList.Title)] = shoppingList.Title,
                 [nameof(ShoppingList.UserId)] = shoppingList.UserId,
+                [nameof(ShoppingList.LastModifiedDate)] = shoppingList.LastModifiedDate,
                 [nameof(ShoppingList.Items)] = JsonSerializer.Serialize(shoppingList.Items),
             };
 
@@ -42,7 +43,38 @@ public class ShoppingListDataContext
             _logger.LogError(ex, "Error saving Expense with Id {ExpenseId}: {ErrorMessage}", shoppingList.Id, ex.Message);
             throw;
         }
+    }
 
+    public async Task AddRangeAsync(IEnumerable<ShoppingList> shoppingListItems)
+    {
+        var entities = shoppingListItems.Select(s => new TableEntity(s.UserId, s.Id.ToString())
+        {
+            [nameof(ShoppingList.Title)] = s.Title,
+            [nameof(ShoppingList.UserId)] = s.UserId,
+            [nameof(ShoppingList.LastModifiedDate)] = s.LastModifiedDate,
+            [nameof(ShoppingList.Items)] = JsonSerializer.Serialize(s.Items),
+        });
+
+        foreach (var entity in entities)
+        {
+            await _client.AddEntityAsync(entity);
+        }
+    }
+
+    public async Task UpdateRangeAsync(IEnumerable<ShoppingList> shoppingListItems)
+    {
+        var entities = shoppingListItems.Select(s => new TableEntity(s.UserId, s.Id.ToString())
+        {
+            [nameof(ShoppingList.Title)] = s.Title,
+            [nameof(ShoppingList.UserId)] = s.UserId,
+            [nameof(ShoppingList.LastModifiedDate)] = s.LastModifiedDate,
+            [nameof(ShoppingList.Items)] = JsonSerializer.Serialize(s.Items),
+        });
+
+        foreach (var entity in entities)
+        {
+            await _client.UpsertEntityAsync(entity);
+        }
     }
 
     public IEnumerable<ShoppingList> GetAll()
@@ -51,8 +83,9 @@ public class ShoppingListDataContext
         return entities.Select(e => new ShoppingList
         {
             Id = Guid.Parse(e.RowKey),
-            Title = e[nameof(Expense.Title)]?.ToString() ?? string.Empty,
-            UserId = e[nameof(Expense.UserId)]?.ToString() ?? string.Empty,
+            Title = e[nameof(ShoppingList.Title)]?.ToString() ?? string.Empty,
+            LastModifiedDate = ((DateTimeOffset)e[nameof(ShoppingList.LastModifiedDate)]).UtcDateTime,
+            UserId = e[nameof(ShoppingList.UserId)]?.ToString() ?? string.Empty,
             Items = JsonSerializer.Deserialize<ICollection<ShoppingList.ShoppingListItem>>(e[nameof(ShoppingList.Items)]?.ToString() ?? string.Empty) ?? new HashSet<ShoppingList.ShoppingListItem>()
         });
     }
@@ -68,8 +101,9 @@ public class ShoppingListDataContext
         return new ShoppingList
         {
             Id = id,
-            Title = entity[nameof(Expense.Title)]?.ToString() ?? string.Empty,
-            UserId = entity[nameof(Expense.UserId)]?.ToString() ?? string.Empty,
+            Title = entity[nameof(ShoppingList.Title)]?.ToString() ?? string.Empty,
+            LastModifiedDate = DateTime.Parse(entity[nameof(ShoppingList.LastModifiedDate)].ToString()!),
+            UserId = entity[nameof(ShoppingList.UserId)]?.ToString() ?? string.Empty,
             Items = JsonSerializer.Deserialize<ICollection<ShoppingList.ShoppingListItem>>(entity[nameof(Expense.Items)]?.ToString() ?? string.Empty) ?? new HashSet<ShoppingList.ShoppingListItem>()
         };
     }

@@ -1,10 +1,10 @@
+using ExpenseTracker.Web.Api.Extensions;
 using ExpenseTracker.Web.Api.Services;
 using ExpenseTracker.Web.Shared.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using System.Security.Claims;
 
 namespace ExpenseTracker.Web.Api;
 
@@ -31,11 +31,7 @@ public class CreateShoppingListFunction
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
 
-        var identity = ClientPrincipalBuilder.BuildFromHttpRequest(req);
-        var userId = identity.Claims
-            .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?
-            .Value ?? string.Empty;
-
+        var userId = req.GetUserId();
         await Service.CreateShoppingListAsync(model, userId);
 
         var response = req.CreateResponse(HttpStatusCode.Created);

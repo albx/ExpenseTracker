@@ -9,6 +9,8 @@ public class ShoppingListOfflineModel
     [Required]
     public string Title { get; set; } = string.Empty;
 
+    public DateTime LastModifiedDate { get; set; }
+
     public List<ShoppingListItemModel> Items { get; set; } = new();
 
     public class ShoppingListItemModel

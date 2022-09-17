@@ -8,6 +8,8 @@ public class ShoppingList
 
     public string UserId { get; set; } = string.Empty;
 
+    public DateTime LastModifiedDate { get; set; }
+
     public ICollection<ShoppingListItem> Items { get; set; } = new HashSet<ShoppingListItem>();
 
     public record ShoppingListItem(string Name, int? Quantity, bool IsAcquired);

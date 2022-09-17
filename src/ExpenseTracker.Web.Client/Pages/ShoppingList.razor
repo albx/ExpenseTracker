@@ -1,4 +1,5 @@
 ﻿@page "/shoppinglist"
+@inject IJSRuntime Js
 @inject ShoppingListService Service
 
 @attribute [Authorize]
@@ -24,7 +25,7 @@
                             <Actions>
                                 <div class="btn-group">
                                     <a href="shoppinglist/@item.Id" class="btn btn-m btn-outline-primary">View</a>
-                                    <button type="button" class="btn btn-m btn-danger">Delete</button>
+                                    <button type="button" @onclick="@(() => DeleteShoppingList(item))" class="btn btn-m btn-danger">Delete</button>
                                 </div>
                             </Actions>
                             <ChildContent>
@@ -41,8 +42,43 @@
     </Content>
 </PageLayout>
 
+<Confirm ModalId="@deleteShoppingListModalId"
+         Title="Eliminazione spesa"
+         Content="@($"Stai per cancellare la spesa {selectedItem?.Title}. Sei sicuro?")"
+         OnConfirm="DeleteShoppingListConfirmed" />
+
 @code {
     private ShoppingListItemsModel model = new();
+
+    private string deleteShoppingListModalId = "deleteShoppingList";
+
+    private ShoppingListItemsModel.ItemDescriptor? selectedItem = null;
+
+    async Task DeleteShoppingList(ShoppingListItemsModel.ItemDescriptor shoppingList)
+    {
+        this.selectedItem = shoppingList;
+        await Js.InvokeVoidAsync("showModal", deleteShoppingListModalId);
+    }
+
+    private async Task DeleteShoppingListConfirmed()
+    {
+        try
+        {
+            await Service.DeleteShoppingListAsync(this.selectedItem!);
+            await Js.InvokeVoidAsync("alert", "Elemento cancellato con successo!");
+
+            model = await Service.GetShoppingListItemsAsync();
+        }
+        catch (Exception ex)
+        {
+            await Js.InvokeVoidAsync("alert", $"Si è verificato un errore durante la cancellazione. {ex.Message}");
+        }
+        finally
+        {
+            await Js.InvokeVoidAsync("hideModal", deleteShoppingListModalId);
+            this.selectedItem = null;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
