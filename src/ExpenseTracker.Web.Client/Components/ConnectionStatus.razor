@@ -1,0 +1,36 @@
+﻿@inject IJSRuntime JsRuntime
+@inject Models.ConnectionState ConnectionState
+@implements IDisposable
+
+@if (!ConnectionState.IsOnline)
+{
+    <button type="button" class="btn btn-outline-warning">
+        <i class="fa-solid fa-sync"></i>
+    </button>
+}
+
+@code {
+    [JSInvokable("OnConnectionStatusChanged")]
+    public void OnConnectionStatusChanged(bool isOnline)
+    {
+        if (ConnectionState.IsOnline != isOnline)
+        {
+            ConnectionState.IsOnline = isOnline;
+        }
+
+        StateHasChanged();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync("connectionState.initialize", DotNetObjectReference.Create(this));
+        }
+    }
+
+    public void Dispose()
+    {
+        JsRuntime.InvokeVoidAsync("connectionState.dispose");
+    }
+}

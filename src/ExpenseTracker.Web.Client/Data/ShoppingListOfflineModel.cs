@@ -11,6 +11,8 @@ public class ShoppingListOfflineModel
 
     public DateTime LastModifiedDate { get; set; }
 
+    public bool Deleted { get; set; }
+
     public List<ShoppingListItemModel> Items { get; set; } = new();
 
     public class ShoppingListItemModel

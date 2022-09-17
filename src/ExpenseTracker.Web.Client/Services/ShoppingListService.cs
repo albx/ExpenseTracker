@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Web.Client.Data;
+using ExpenseTracker.Web.Client.Models;
 using ExpenseTracker.Web.Shared.Models;
 using System.Net.Http.Json;
 
@@ -8,24 +9,22 @@ public class ShoppingListService
 {
     public HttpClient Client { get; }
     public OfflineContext OfflineContext { get; }
+    public ConnectionState ConnectionState { get; }
 
-    public ShoppingListService(HttpClient client, OfflineContext offlineContext)
+    public ShoppingListService(HttpClient client, OfflineContext offlineContext, ConnectionState connectionState)
     {
         Client = client ?? throw new ArgumentNullException(nameof(client));
         OfflineContext = offlineContext ?? throw new ArgumentNullException(nameof(offlineContext));
+        ConnectionState = connectionState ?? throw new ArgumentNullException(nameof(connectionState));
     }
 
     public async Task<ShoppingListItemsModel> GetShoppingListItemsAsync()
     {
         var model = new ShoppingListItemsModel();
 
-        try
+        if (ConnectionState.IsOnline)
         {
             model = await Client.GetFromJsonAsync<ShoppingListItemsModel>("/api/ShoppingList") ?? new();
-        }
-        catch (HttpRequestException)
-        {
-            //TODO loggare
         }
 
         await MergeWithOfflineAsync(model);
@@ -40,37 +39,49 @@ public class ShoppingListService
         var offlineItems = await OfflineContext.GetAll<ShoppingListOfflineModel>();
         if (offlineItems.Any())
         {
-            var mergedItems = model.Items.ToList();
+            var mergeModel = Enumerable.Empty<ShoppingListModel>();
 
-            foreach (var shoppingList in offlineItems)
+            try
             {
-                if (!mergedItems.Any(i => i.Id == shoppingList.Id))
+                var mergedItems = model.Items.ToList();
+
+                foreach (var shoppingList in offlineItems)
                 {
-                    mergedItems.Add(new ShoppingListItemsModel.ItemDescriptor
+                    if (!mergedItems.Any(i => i.Id == shoppingList.Id))
                     {
-                        Id = shoppingList.Id,
-                        Title = shoppingList.Title,
-                        NumberOfItems = shoppingList.Items.Count
-                    });
+                        mergedItems.Add(new ShoppingListItemsModel.ItemDescriptor
+                        {
+                            Id = shoppingList.Id,
+                            Title = shoppingList.Title,
+                            NumberOfItems = shoppingList.Items.Count
+                        });
+                    }
                 }
-            }
 
-            var mergeModel = offlineItems.Select(i => new ShoppingListModel
-            {
-                Id = i.Id,
-                Title = i.Title,
-                LastModifiedDate = i.LastModifiedDate,
-                Items = i.Items.Select(x => new ShoppingListModel.ShoppingListItemModel
+                mergeModel = offlineItems.Where(i => !i.Deleted).Select(i => new ShoppingListModel
                 {
-                    Name = x.Name,
-                    IsAcquired = x.IsAcquired,
-                    Quantity = x.Quantity
-                }).ToList()
-            });
+                    Id = i.Id,
+                    Title = i.Title,
+                    LastModifiedDate = i.LastModifiedDate,
+                    Items = i.Items.Select(x => new ShoppingListModel.ShoppingListItemModel
+                    {
+                        Name = x.Name,
+                        IsAcquired = x.IsAcquired,
+                        Quantity = x.Quantity
+                    }).ToList()
+                });
 
-            await Client.PostAsJsonAsync("/api/MergeShoppingList", mergeModel);
+                model.Items = mergedItems;
+            }
+            finally
+            {
+                if (ConnectionState.IsOnline)
+                {
+                    await Client.PostAsJsonAsync("/api/MergeShoppingList", mergeModel);
+                }
 
-            model.Items = mergedItems;
+                await RemoveOfflineItemsAsync(offlineItems.Where(i => i.Deleted));
+            }
         }
     }
 
@@ -81,10 +92,13 @@ public class ShoppingListService
 
         await CreateOfflineAsync(model);
 
-        var response = await Client.PostAsJsonAsync("/api/CreateShoppingList", model);
-        if (!response.IsSuccessStatusCode)
+        if (ConnectionState.IsOnline)
         {
-            throw new Exception("Error creating shopping list");
+            var response = await Client.PostAsJsonAsync("/api/CreateShoppingList", model);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error creating shopping list");
+            }
         }
     }
 
@@ -111,7 +125,13 @@ public class ShoppingListService
     {
         try
         {
-            var model = await Client.GetFromJsonAsync<ShoppingListModel>($"/api/ShoppingListDetail/{shoppingListId}");
+            ShoppingListModel? model = null;
+
+            if (ConnectionState.IsOnline)
+            {
+                model = await Client.GetFromJsonAsync<ShoppingListModel>($"/api/ShoppingListDetail/{shoppingListId}");
+            }
+
             if (model is null)
             {
                 model = await LoadFromOfflineAsync(shoppingListId);
@@ -154,13 +174,16 @@ public class ShoppingListService
         model.LastModifiedDate = DateTime.UtcNow;
         await UpdateOfflineAsync(shoppingListId, model);
 
-        var response = await Client.PutAsJsonAsync(
-            $"/api/UpdateShoppingList/{shoppingListId}",
-            model);
-
-        if (!response.IsSuccessStatusCode)
+        if (ConnectionState.IsOnline)
         {
-            throw new Exception("Error updating shopping list");
+            var response = await Client.PutAsJsonAsync(
+                $"/api/UpdateShoppingList/{shoppingListId}",
+                model);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error updating shopping list");
+            }
         }
     }
 
@@ -186,18 +209,37 @@ public class ShoppingListService
 
     public async Task DeleteShoppingListAsync(ShoppingListItemsModel.ItemDescriptor shoppingList)
     {
-        await RemoveOfflineAsync(shoppingList);
+        await DeleteOfflineAsync(shoppingList.Id);
 
-        var response = await Client.DeleteAsync($"/api/DeleteShoppingList/{shoppingList.Id}");
-        if (!response.IsSuccessStatusCode)
+        if (ConnectionState.IsOnline)
         {
-            throw new Exception($"Error deleting shopping list {shoppingList.Title}");
+            var response = await Client.DeleteAsync($"/api/DeleteShoppingList/{shoppingList.Id}");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Error deleting shopping list {shoppingList.Title}");
+            }
         }
     }
 
-    private async Task RemoveOfflineAsync(ShoppingListItemsModel.ItemDescriptor shoppingList)
+    private async Task DeleteOfflineAsync(Guid shoppingListId)
     {
         await OfflineContext.OpenIndexedDb();
-        await OfflineContext.DeleteByKey(nameof(ShoppingListOfflineModel), shoppingList.Id);
+
+        var shoppingList = await OfflineContext.GetByKey<Guid, ShoppingListOfflineModel>(shoppingListId);
+        if (shoppingList is not null)
+        {
+            shoppingList.Deleted = true;
+            await OfflineContext.UpdateItems(new List<ShoppingListOfflineModel> { shoppingList });
+        }
+    }
+
+    private async Task RemoveOfflineItemsAsync(IEnumerable<ShoppingListOfflineModel> items)
+    {
+        await OfflineContext.OpenIndexedDb();
+
+        foreach (var item in items)
+        {
+            await OfflineContext.DeleteByKey(nameof(ShoppingListOfflineModel), item.Id);
+        }
     }
 }

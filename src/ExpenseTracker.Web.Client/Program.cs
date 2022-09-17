@@ -4,6 +4,7 @@ using DnetIndexedDb.Fluent;
 using DnetIndexedDb.Models;
 using ExpenseTracker.Web.Client;
 using ExpenseTracker.Web.Client.Data;
+using ExpenseTracker.Web.Client.Models;
 using ExpenseTracker.Web.Client.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -14,6 +15,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddStaticWebAppsAuthentication();
 builder.Services.AddLocalization();
+
+builder.Services.AddSingleton(ConnectionState.Default);
 
 builder.Services.AddHttpClient<ExpensesService>(client =>
 {
